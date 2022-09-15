@@ -84,7 +84,8 @@
       const response = await fetch('https://76l2d4guai.execute-api.eu-west-2.amazonaws.com/beta?contact_id='+contact.getAttributes().ContactId.value, {
         method: 'GET', // string or object
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin' : '*',
         }
       });
       const jsonResponse = await response.json();
