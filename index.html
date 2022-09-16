@@ -15,13 +15,13 @@
     <!--Amazon CCP will go here-->
   </div>
   <div id="logMsgsContainer">
-    <h2>Log Messages</h2>
+    <h2>Customer Details</h2>
     <div id="logMsgs" style="height: 465px; overflow: auto;">
       <!-- log messages will go here -->
     </div>
   </div>
   <div id="eventMsgsContainer">
-    <h2>Event Messages</h2>
+    <h2>Previous Chat History</h2>
     <div id="eventMsgs" style="height: 465px; overflow: auto;">
       <!-- events from Streams API will go here-->
     </div>
@@ -88,7 +88,7 @@
       });
       const jsonResponse = await response.json();
       logInfoEvent("Chat Transcipt from previous contact: ");
-      logInfoEvent(JSON.stringify(jsonResponse, null, 2));
+      logInfoEvent(JSON.stringify(jsonResponse.Transcript, null, 2));
     } else {
       logInfoEvent("[contact.onConnected] Contact connected to agent. Null contact passed to event handler");
     }
@@ -96,15 +96,15 @@
 
   function handleContactEnded(contact) {
     if (contact) {
-      logInfoEvent("[contact.onEnded] Contact has ended. Contact state is " + contact.getStatus().type);
+      //logInfoEvent("[contact.onEnded] Contact has ended. Contact state is " + contact.getStatus().type);
     } else {
-      logInfoEvent("[contact.onEnded] Contact has ended. Null contact passed to event handler");
+      //logInfoEvent("[contact.onEnded] Contact has ended. Null contact passed to event handler");
     }
   }
 
   function subscribeToAgentEvents(agent) {
-    logInfoMsg("Subscribing to events for agent " + agent.getName());
-    logInfoMsg("Agent is currently in status of " + agent.getStatus().name);
+    //logInfoMsg("Subscribing to events for agent " + agent.getName());
+    //logInfoMsg("Agent is currently in status of " + agent.getStatus().name);
     agent.onRefresh(handleAgentRefresh);
     agent.onRoutable(handleAgentRoutable);
     agent.onNotRoutable(handleAgentNotRoutable);
@@ -112,19 +112,19 @@
   }
 
   function handleAgentRefresh(agent) {
-    logInfoEvent("[agent.onRefresh] Agent data refreshed. Agent status is " + agent.getStatus().name);
+    //logInfoEvent("[agent.onRefresh] Agent data refreshed. Agent status is " + agent.getStatus().name);
   }
 
   function handleAgentRoutable(agent) {
-    logInfoEvent("[agent.onRoutable] Agent is routable. Agent status is " + agent.getStatus().name);
+    //logInfoEvent("[agent.onRoutable] Agent is routable. Agent status is " + agent.getStatus().name);
   }
 
   function handleAgentNotRoutable(agent) {
-    logInfoEvent("[agent.onNotRoutable] Agent is online, but not routable. Agent status is " + agent.getStatus().name);
+    //logInfoEvent("[agent.onNotRoutable] Agent is online, but not routable. Agent status is " + agent.getStatus().name);
   }
 
   function handleAgentOffline(agent) {
-    logInfoEvent("[agent.onOffline] Agent is offline. Agent status is " + agent.getStatus().name);
+    //logInfoEvent("[agent.onOffline] Agent is offline. Agent status is " + agent.getStatus().name);
   }
 
   function logMsgToScreen(msg) {
