@@ -1,84 +1,83 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <script type="text/javascript" src="https://amoondra1989.github.io/connect-streams-min.js"></script>
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <script type="text/javascript" src="https://amoondra1989.github.io/connect-streams-min.js"></script>
+</head>
 <body>
-    <div id="topDiv" style="width: 700px; min-width: 700px; margin-left: 200px;">
-        <div id="myApp">
-            <h1>Vendor Central Agent Panel<h1>
-        </div>
+<div id="topDiv" style="width: 700px; min-width: 700px; margin-left: 200px;">
+  <div id="myApp">
+    <h1>Vendor Central Agent Panel<h1>
+  </div>
+</div>
+<div id="gridDiv" style="display: grid; grid-template-columns: 350px 400px 400px">
+  <div id="containerDiv" style="width: 320px; min-width: 200px; height: 465px; min-height: 400px; ">
+    <!--Amazon CCP will go here-->
+  </div>
+  <div id="logMsgsContainer">
+    <h2>Log Messages</h2>
+    <div id="logMsgs" style="height: 465px; overflow: auto;">
+      <!-- log messages will go here -->
     </div>
-    <div id="gridDiv" style="display: grid; grid-template-columns: 350px 400px 400px">
-        <div id="containerDiv" style="width: 320px; min-width: 200px; height: 465px; min-height: 400px; ">
-            <!--Amazon CCP will go here-->
-        </div>
-        <div id="logMsgsContainer">
-            <h2>Log Messages</h2>
-            <div id="logMsgs" style="height: 465px; overflow: auto;">
-                <!-- log messages will go here -->
-            </div>
-        </div>
-        <div id="eventMsgsContainer">
-            <h2>Event Messages</h2>
-            <div id="eventMsgs" style="height: 465px; overflow: auto;">
-                <!-- events from Streams API will go here-->
-            </div>
-        </div>
+  </div>
+  <div id="eventMsgsContainer">
+    <h2>Event Messages</h2>
+    <div id="eventMsgs" style="height: 465px; overflow: auto;">
+      <!-- events from Streams API will go here-->
     </div>
+  </div>
+</div>
 </body>
 </html>
 <script src="amazon-connect-v1.2.0.js"></script>
 <script type="text/javascript">
-    //replace with the CCP URL for your Amazon Connect instance
-    var ccpUrl = "https://beta-avs-eu-1.my.connect.aws/connect/ccp-v2/softfone";
+  //replace with the CCP URL for your Amazon Connect instance
+  var ccpUrl = "https://beta-avs-eu-1.my.connect.aws/connect/ccp-v2/softfone";
 
-    connect.core.initCCP(containerDiv, {
-        ccpUrl: ccpUrl,        
-        loginPopup: true,         
-        softphone: {
-            allowFramedSoftphone: true
-        }
-    });
+  connect.core.initCCP(containerDiv, {
+    ccpUrl: ccpUrl,
+    loginPopup: true,
+    softphone: {
+      allowFramedSoftphone: true
+    }
+  });
 
-    connect.contact(subscribeToContactEvents);
-    connect.agent(subscribeToAgentEvents);
+  connect.contact(subscribeToContactEvents);
+  connect.agent(subscribeToAgentEvents);
 
-    function subscribeToContactEvents(contact) {
-        logInfoMsg("Subscribing to events for contact");
-        if (contact.getActiveInitialConnection()
+  function subscribeToContactEvents(contact) {
+    logInfoMsg("Subscribing to events for contact");
+    if (contact.getActiveInitialConnection()
             && contact.getActiveInitialConnection().getEndpoint()) {
-            logInfoMsg("New contact is from " + contact.getActiveInitialConnection().getEndpoint().phoneNumber);
-        } else {
-            logInfoMsg("This is an existing contact for this agent");
-        }
-        logInfoMsg("Contact is from queue " + contact.getQueue().name);
-        logInfoMsg("Contact attributes are " + JSON.stringify(contact.getAttributes()));
-        logInfoMsg("Contact ID is " + contact.getAttributes().ContactId.value);
-        contact.onIncoming(handleContactIncoming);
-        contact.onAccepted(handleContactAccepted);
-        contact.onConnected(handleContactConnected);
-        contact.onEnded(handleContactEnded);
-    }
 
-    function handleContactIncoming(contact) {
-        if (contact) {
-            logInfoEvent("[contact.onIncoming] Contact is incoming. Contact state is " + contact.getStatus().type);
-        } else {
-            logInfoEvent("[contact.onIncoming] Contact is incoming. Null contact passed to event handler");
-        }
+      logInfoMsg("New contact is Name: "+contact.getInitialConnection().getEndpoint().name+", Phone Number :" + contact.getActiveInitialConnection().getEndpoint().phoneNumber);
+    } else {
+      logInfoMsg("This is an existing contact for this agent");
     }
+    logInfoMsg("Contact is from queue " + contact.getQueue().name);
+    //contact.onIncoming(handleContactIncoming);
+    contact.onAccepted(handleContactAccepted);
+    contact.onConnected(handleContactConnected);
+    contact.onEnded(handleContactEnded);
+  }
 
-    function handleContactAccepted(contact) {
-        if (contact) {
-            logInfoEvent("[contact.onAccepted] Contact accepted by agent. Contact state is " + contact.getStatus().type);
-        } else {
-            logInfoEvent("[contact.onAccepted] Contact accepted by agent. Null contact passed to event handler");
-        }
+  function handleContactIncoming(contact) {
+    if (contact) {
+      //logInfoEvent("[contact.onIncoming] Contact is incoming. Contact state is " + contact.getStatus().type);
+    } else {
+      //logInfoEvent("[contact.onIncoming] Contact is incoming. Null contact passed to event handler");
     }
+  }
 
-    async function handleContactConnected(contact) {
+  function handleContactAccepted(contact) {
+    if (contact) {
+      //logInfoEvent("[contact.onAccepted] Contact accepted by agent. Contact state is " + contact.getStatus().type);
+    } else {
+      //logInfoEvent("[contact.onAccepted] Contact accepted by agent. Null contact passed to event handler");
+    }
+  }
+
+  async function handleContactConnected(contact) {
     if (contact) {
       logInfoEvent("URL : "+'https://76l2d4guai.execute-api.eu-west-2.amazonaws.com/beta?contact_id='+contact.getAttributes().ContactId.value);
       const response = await fetch('https://76l2d4guai.execute-api.eu-west-2.amazonaws.com/beta?contact_id='+contact.getAttributes().ContactId.value, {
@@ -88,61 +87,61 @@
         }
       });
       const jsonResponse = await response.json();
-      logInfoEvent("Chat transcpt is: "+JSON.stringify(jsonResponse));
-      logInfoEvent("[contact.onConnected] Contact connected to agent. Contact state is " + contact.getStatus().type);
+      logInfoEvent("Chat Transcipt from previous contact: ");
+      logInfoEvent(JSON.stringify(jsonResponse, null, 2));
     } else {
       logInfoEvent("[contact.onConnected] Contact connected to agent. Null contact passed to event handler");
     }
   }
 
-    function handleContactEnded(contact) {
-        if (contact) {
-            logInfoEvent("[contact.onEnded] Contact has ended. Contact state is " + contact.getStatus().type);
-        } else {
-            logInfoEvent("[contact.onEnded] Contact has ended. Null contact passed to event handler");
-        }
+  function handleContactEnded(contact) {
+    if (contact) {
+      logInfoEvent("[contact.onEnded] Contact has ended. Contact state is " + contact.getStatus().type);
+    } else {
+      logInfoEvent("[contact.onEnded] Contact has ended. Null contact passed to event handler");
     }
+  }
 
-    function subscribeToAgentEvents(agent) {
-        logInfoMsg("Subscribing to events for agent " + agent.getName());
-        logInfoMsg("Agent is currently in status of " + agent.getStatus().name);
-        agent.onRefresh(handleAgentRefresh);
-        agent.onRoutable(handleAgentRoutable);
-        agent.onNotRoutable(handleAgentNotRoutable);
-        agent.onOffline(handleAgentOffline);
-    }
+  function subscribeToAgentEvents(agent) {
+    logInfoMsg("Subscribing to events for agent " + agent.getName());
+    logInfoMsg("Agent is currently in status of " + agent.getStatus().name);
+    agent.onRefresh(handleAgentRefresh);
+    agent.onRoutable(handleAgentRoutable);
+    agent.onNotRoutable(handleAgentNotRoutable);
+    agent.onOffline(handleAgentOffline);
+  }
 
-    function handleAgentRefresh(agent) {
-        logInfoEvent("[agent.onRefresh] Agent data refreshed. Agent status is " + agent.getStatus().name);
-    }
+  function handleAgentRefresh(agent) {
+    logInfoEvent("[agent.onRefresh] Agent data refreshed. Agent status is " + agent.getStatus().name);
+  }
 
-    function handleAgentRoutable(agent) {
-        logInfoEvent("[agent.onRoutable] Agent is routable. Agent status is " + agent.getStatus().name);
-    }
+  function handleAgentRoutable(agent) {
+    logInfoEvent("[agent.onRoutable] Agent is routable. Agent status is " + agent.getStatus().name);
+  }
 
-    function handleAgentNotRoutable(agent) {
-        logInfoEvent("[agent.onNotRoutable] Agent is online, but not routable. Agent status is " + agent.getStatus().name);
-    }
+  function handleAgentNotRoutable(agent) {
+    logInfoEvent("[agent.onNotRoutable] Agent is online, but not routable. Agent status is " + agent.getStatus().name);
+  }
 
-    function handleAgentOffline(agent) {
-        logInfoEvent("[agent.onOffline] Agent is offline. Agent status is " + agent.getStatus().name);
-    }
+  function handleAgentOffline(agent) {
+    logInfoEvent("[agent.onOffline] Agent is offline. Agent status is " + agent.getStatus().name);
+  }
 
-    function logMsgToScreen(msg) {
-        logMsgs.innerHTML = '<div>' + new Date().toLocaleTimeString() + ' ' + msg + '</div>' + logMsgs.innerHTML;
-    }
+  function logMsgToScreen(msg) {
+    logMsgs.innerHTML = '<div>' + new Date().toLocaleTimeString() + ' ' + msg + '</div>' + logMsgs.innerHTML;
+  }
 
-    function logEventToScreen(msg) {
-        eventMsgs.innerHTML = '<div>' + new Date().toLocaleTimeString() + ' ' + msg + '</div>' + eventMsgs.innerHTML;
-    }
+  function logEventToScreen(msg) {
+    eventMsgs.innerHTML = '<div>' + new Date().toLocaleTimeString() + ' ' + msg + '</div>' + eventMsgs.innerHTML;
+  }
 
-    function logInfoMsg(msg) {
-        connect.getLog().info(msg);
-        logMsgToScreen(msg);
-    }
+  function logInfoMsg(msg) {
+    connect.getLog().info(msg);
+    logMsgToScreen(msg);
+  }
 
-    function logInfoEvent(eventMsg) {
-        connect.getLog().info(eventMsg);
-        logEventToScreen(eventMsg);
-    }
+  function logInfoEvent(eventMsg) {
+    connect.getLog().info(eventMsg);
+    logEventToScreen(eventMsg);
+  }
 </script>
