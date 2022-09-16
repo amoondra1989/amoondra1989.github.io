@@ -79,7 +79,6 @@
 
   async function handleContactConnected(contact) {
     if (contact) {
-      logInfoEvent("URL : "+'https://76l2d4guai.execute-api.eu-west-2.amazonaws.com/beta?contact_id='+contact.getAttributes().ContactId.value);
       const response = await fetch('https://76l2d4guai.execute-api.eu-west-2.amazonaws.com/beta?contact_id='+contact.getAttributes().ContactId.value, {
         method: 'GET', // string or object
         headers: {
